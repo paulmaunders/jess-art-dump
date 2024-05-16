@@ -11,7 +11,7 @@ body {
   font-family: var(--font-family);
   background-color: var(--color-bg);
   margin: 0;
-  overflow: hidden;
+  overflow-x: hidden;
   position: relative;
 }
 
@@ -27,6 +27,7 @@ body {
 
 .content {
   text-align: center;
+  padding: 1rem;
 }
 
 .title {
@@ -105,6 +106,7 @@ h2 {
   }
   50% {
     transform: translateY(-100px) rotate(180deg);
+  }
   100% {
     transform: translateY(0) rotate(360deg);
   }
