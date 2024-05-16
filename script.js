@@ -32,7 +32,9 @@ document.addEventListener('DOMContentLoaded', function () {
         });
   
         overlay.addEventListener('click', () => {
-          overlay.removeChild(overlayContent);
+          if (overlay.contains(overlayContent)) {
+              overlay.removeChild(overlayContent);
+          }
           overlay.style.display = 'none';
         });
       });
@@ -52,11 +54,23 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   
     document.addEventListener('keydown', (event) => {
-        if (event.key === 'ArrowRight') {
-            currentIndex = (currentIndex + 1) % illustrations.length; // Move to next image
-        } else if (event.key === 'ArrowLeft') {
-            currentIndex = (currentIndex - 1 + illustrations.length) % illustrations.length; // Move to previous image
+        console.log(event.key); // This will log which key is pressed.
+        if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') {
+            if (event.key === 'ArrowRight') {
+                currentIndex = (currentIndex + 1) % illustrations.length;
+            } else {
+                currentIndex = (currentIndex - 1 + illustrations.length) % illustrations.length;
+            }
+            updateOverlay();
+        } else if (event.key === 'Escape') {
+            event.preventDefault(); // Prevent any default behavior
+            const overlay = document.getElementById('overlay');
+            overlay.style.display = 'none';
+            overlay.innerHTML = ''; // Clear the overlay content
         }
+    });
+
+    function updateOverlay() {
         const img = illustrations[currentIndex];
         const overlay = document.getElementById('overlay');
         overlay.innerHTML = ''; // Clear existing overlay content
@@ -79,8 +93,16 @@ document.addEventListener('DOMContentLoaded', function () {
         overlay.appendChild(overlayContent);
 
         fullscreenImg.addEventListener('click', () => {
-          overlay.removeChild(overlayContent);
           overlay.style.display = 'none';
+          overlay.innerHTML = ''; // Ensure overlay is cleared when image is clicked
         });
+    }
+
+    overlay.addEventListener('click', (event) => {
+        if (event.target === overlay) { // Check if the click is on the overlay and not on an image
+            overlay.style.display = 'none';
+            overlay.innerHTML = ''; // Clear the overlay content
+        }
     });
   });
+
