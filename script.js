@@ -1,39 +1,92 @@
 document.addEventListener('DOMContentLoaded', function () {
   const overlay = document.getElementById('overlay');
-
   const illustrations = document.querySelectorAll('.illustration');
-  illustrations.forEach((img) => {
+  let currentIndex = 0;
+
+  const showImage = (index) => {
+    const imgContainer = illustrations[index].closest('.image-container');
+    const date = imgContainer.dataset.date;
+    const src = illustrations[index].src;
+
+    const overlayContent = document.createElement('div');
+    overlayContent.className = 'overlay-content';
+
+    const fullscreenImg = document.createElement('img');
+    fullscreenImg.src = src;
+    fullscreenImg.style.cursor = 'zoom-out';
+
+    const dateText = document.createElement('div');
+    dateText.className = 'date';
+    dateText.textContent = date;
+
+    overlayContent.appendChild(fullscreenImg);
+    overlayContent.appendChild(dateText);
+
+    overlay.innerHTML = ''; // Clear previous content
+    overlay.appendChild(overlayContent);
+    overlay.style.display = 'flex';
+
+    fullscreenImg.addEventListener('click', () => {
+      overlay.style.display = 'none';
+      overlay.innerHTML = ''; // Clear current content
+    });
+
+    overlay.addEventListener('click', () => {
+      overlay.style.display = 'none';
+      overlay.innerHTML = ''; // Clear current content
+    });
+  };
+
+  const showNextImage = () => {
+    currentIndex = (currentIndex + 1) % illustrations.length;
+    showImage(currentIndex);
+  };
+
+  const showPreviousImage = () => {
+    currentIndex = (currentIndex - 1 + illustrations.length) % illustrations.length;
+    showImage(currentIndex);
+  };
+
+  const handleTouchStart = (evt) => {
+    const firstTouch = evt.touches[0];
+    xDown = firstTouch.clientX;
+    yDown = firstTouch.clientY;
+  };
+
+  const handleTouchMove = (evt) => {
+    if (!xDown || !yDown) {
+      return;
+    }
+
+    const xUp = evt.touches[0].clientX;
+    const yUp = evt.touches[0].clientY;
+
+    const xDiff = xDown - xUp;
+    const yDiff = yDown - yUp;
+
+    if (Math.abs(xDiff) > Math.abs(yDiff)) {
+      if (xDiff > 0) {
+        /* left swipe */
+        showNextImage();
+      } else {
+        /* right swipe */
+        showPreviousImage();
+      }
+    }
+    /* reset values */
+    xDown = null;
+    yDown = null;
+  };
+
+  illustrations.forEach((img, index) => {
     img.addEventListener('click', () => {
-      const date = img.closest('.image-container').dataset.date;
-
-      const overlayContent = document.createElement('div');
-      overlayContent.className = 'overlay-content';
-
-      const fullscreenImg = document.createElement('img');
-      fullscreenImg.src = img.src;
-      fullscreenImg.style.cursor = 'zoom-out';
-
-      const dateText = document.createElement('div');
-      dateText.className = 'date';
-      dateText.textContent = date;
-
-      overlayContent.appendChild(fullscreenImg);
-      overlayContent.appendChild(dateText);
-
-      overlay.style.display = 'flex';
-      overlay.appendChild(overlayContent);
-
-      fullscreenImg.addEventListener('click', () => {
-        overlay.removeChild(overlayContent);
-        overlay.style.display = 'none';
-      });
-
-      overlay.addEventListener('click', () => {
-        overlay.removeChild(overlayContent);
-        overlay.style.display = 'none';
-      });
+      currentIndex = index;
+      showImage(currentIndex);
     });
   });
+
+  overlay.addEventListener('touchstart', handleTouchStart, false);
+  overlay.addEventListener('touchmove', handleTouchMove, false);
 
   // Add moving hearts to the background
   const heartsContainer = document.querySelector('.hearts-container');
