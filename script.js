@@ -4,27 +4,32 @@ document.addEventListener('DOMContentLoaded', function () {
   const illustrations = document.querySelectorAll('.illustration');
   illustrations.forEach((img) => {
     img.addEventListener('click', () => {
+      const date = img.closest('.image-container').dataset.date;
+
+      const overlayContent = document.createElement('div');
+      overlayContent.className = 'overlay-content';
+
       const fullscreenImg = document.createElement('img');
       fullscreenImg.src = img.src;
-      fullscreenImg.style.position = 'fixed';
-      fullscreenImg.style.top = '50%';
-      fullscreenImg.style.left = '50%';
-      fullscreenImg.style.transform = 'translate(-50%, -50%)';
-      fullscreenImg.style.maxWidth = '90%';
-      fullscreenImg.style.maxHeight = '90%';
-      fullscreenImg.style.zIndex = '1000';
       fullscreenImg.style.cursor = 'zoom-out';
 
+      const dateText = document.createElement('div');
+      dateText.className = 'date';
+      dateText.textContent = date;
+
+      overlayContent.appendChild(fullscreenImg);
+      overlayContent.appendChild(dateText);
+
       overlay.style.display = 'block';
-      document.body.appendChild(fullscreenImg);
+      overlay.appendChild(overlayContent);
 
       fullscreenImg.addEventListener('click', () => {
-        document.body.removeChild(fullscreenImg);
+        overlay.removeChild(overlayContent);
         overlay.style.display = 'none';
       });
 
       overlay.addEventListener('click', () => {
-        document.body.removeChild(fullscreenImg);
+        overlay.removeChild(overlayContent);
         overlay.style.display = 'none';
       });
     });
