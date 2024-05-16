@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function () {
       overlayContent.appendChild(fullscreenImg);
       overlayContent.appendChild(dateText);
 
-      overlay.style.display = 'block';
+      overlay.style.display = 'flex';
       overlay.appendChild(overlayContent);
 
       fullscreenImg.addEventListener('click', () => {
